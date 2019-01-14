@@ -1,0 +1,31 @@
+﻿
+#程序CPU, 内存, 名称
+top -cbn 1 | grep 'java\|Main' | grep -v grep | awk '{print $9, $6, $12$13$14}'
+
+
+#CPU空闲率
+echo cpu_idle: `top -b -n 1 | grep Cpu | awk '{print $5}'`
+
+#内存使用
+echo free_used/free_total: `free -m|grep "-"|awk '{print $3}'`M/`free -m|grep "Mem"|awk '{print $2}'`M
+
+#程序内存和
+total=`free -m|grep "Mem"|awk '{print $2}'`;pg=`top -cbn 1 | grep 'java\|Main' | awk '{sum+=$10};END{print sum}'`;echo "$total*$pg/100"|bc
+
+
+#硬盘空间
+echo df_used/df_total: `df -hP /home | grep / | awk '{print $3}'`/`df -hP /home | grep / | awk '{print $2}'`
+
+#程序使用空间
+du -sh /home
+
+#所有日志按照文件大小排序
+du -m --max-depth=20 --all /home | grep "\.log" |sort -k1 -n
+
+
+#日志数量
+du -m --max-depth=20 --all /home | grep "\.log" | grep -c log
+
+#日志大小求和G
+du --max-depth=20 --all /home | grep "\.log" | awk '{sum+=$1};END{print sum/1024/1024}'
+
